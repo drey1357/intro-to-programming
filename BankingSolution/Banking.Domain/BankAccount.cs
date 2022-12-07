@@ -1,29 +1,36 @@
-﻿namespace Banking.Domain
+﻿namespace Banking.Domain;
+
+public enum BankAccountType { Standard, Gold }
+
+public class BankAccount
 {
-    public class BankAccount
+    public BankAccountType AccountType = BankAccountType.Standard;
+    private decimal _balance = 5000; // "fields" "class level variables"
+    public void Deposit(decimal amountToDeposit)
     {
-        private decimal _balance = 5000; // "fields" "class level variables"
-        public void Deposit(decimal amountToDeposit)
-        {
-            _balance += amountToDeposit;
-        }
+        decimal bonus = AccountType == BankAccountType.Standard
+            ? 0
+            : amountToDeposit * .10M;
 
-        public decimal GetBalance()
-        {
-            return _balance;
-        }
+        _balance += amountToDeposit + bonus;
+    }
 
-        public decimal Withdraw(decimal amountToWithdraw)
+    public decimal GetBalance()
+    {
+        return _balance;
+    }
+
+    public decimal Withdraw(decimal amountToWithdraw)
+    {
+        if (amountToWithdraw > _balance)
         {
-            if (amountToWithdraw > _balance)
-            {
-                throw new OverdraftException();
-            }
-            else
-            {
-                _balance -= amountToWithdraw;
-            }
-            return _balance;
+            throw new OverdraftException();
         }
+        else
+        {
+            _balance -= amountToWithdraw;
+        }
+        return _balance;
     }
 }
+
